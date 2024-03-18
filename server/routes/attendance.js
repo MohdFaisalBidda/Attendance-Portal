@@ -2,11 +2,12 @@ import dotenv from "dotenv";
 import express from "express";
 import Attendance from "../models/AttendanceModel.js";
 import User from "../models/UserModel.js";
+import authenticateJwt from "../middleware/authenticateJwt.js";
 const router = express.Router();
 
 dotenv.config();
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authenticateJwt,async (req, res) => {
   try {
     const userId = req.params.id;
     const attendanceRecords = await Attendance.find({ userId });
@@ -16,7 +17,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authenticateJwt,async (req, res) => {
   try {
     const { userId, date, status } = req.body;
 
@@ -41,7 +42,7 @@ router.post("/", async (req, res) => {
       return res.status(404).json("User not Found");
     }
 
-    user.attendance = newAttendance._id;
+   user.attendance.push(newAttendance._id);
     await user.save();
     res.status(201).json({ message: "Attendance marked successfully!" });
   } catch (error) {
@@ -49,7 +50,33 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.put("/:id", authenticateJwt,async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { attendanceId, status } = req.body;
+
+    if (status !== "present" && status !== "absent") {
+      return res.status(404).json({ message: "Invalid status" });
+    }
+    const existingAttendance = await Attendance.findOneAndUpdate(
+      {
+        userId: userId,
+        _id: attendanceId,
+      },
+      { $set: { status: status } },
+      { new: true }
+    );
+    if (!existingAttendance) {
+      return res.status(404).json({ message: "Attendance record not found" });
+    }
+
+    res.status(200).json(existingAttendance);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete("/:id",authenticateJwt, async (req, res) => {
   try {
     const attendanceId = req.params.id;
     const deletedAttendance = await Attendance.deleteOne({ _id: attendanceId });
@@ -58,14 +85,11 @@ router.delete("/:id", async (req, res) => {
         .status(200)
         .json({ message: "Attendance record removed successfully!" });
     } else {
-        res.status(500).json({message:"Attendance record not found"});
+      res.status(500).json({ message: "Attendance record not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
-
-//update the attendance route
 
 export default router;
