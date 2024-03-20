@@ -30,7 +30,7 @@ router.post("/", authenticateJwt,async (req, res) => {
     if (existingAttendance) {
       return res
         .status(409)
-        .json({ error: "Attendance already marked for the date!" });
+        .json({ error: "Attendance already marked for the day!" });
     }
 
     const newAttendance = new Attendance({ userId, date: formatDate, status });

@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.present-date {
+    background-color: green;
+    color: white;
+  }
+  
+  .absent-date {
+    background-color: red;
+    color: white;
+  }

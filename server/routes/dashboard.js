@@ -8,7 +8,7 @@ dotenv.config();
 
 router.get("/users",authenticateJwt, async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().populate("attendance");
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -12,10 +12,13 @@ import { UserContext } from "./context/UserProvider";
 import { useContext } from "react";
 import PasswordReset from "./components/auth/PasswordReset.jsx";
 import Home from "./components/Home.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import { getToken } from "./utils/localstorage.js";
 
 function App() {
   const { user } = useContext(UserContext);
-
+  const parsedUser = getToken();
+  console.log(parsedUser, "parsed user");
   return (
     <Router>
       <Routes>
@@ -29,11 +32,29 @@ function App() {
         )}
         {user && (
           <>
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                parsedUser.username === "admin" ? (
+                  <Dashboard />
+                ) : (
+                  <Home user={user} />
+                )
+              }
+            />
             <Route path="/login" element={<Navigate to="/" />} />
             <Route path="/register" element={<Navigate to="/" />} />
             <Route path="/reset" element={<Navigate to="/" />} />
+            <Route
+              path="/dashboard"
+              element={
+                parsedUser.username === "admin" && <Navigate to="/dashboard" />
+              }
+            />
           </>
+        )}
+        {user && parsedUser === "admin" && (
+          <Route path="/dashboard" element={<Dashboard />} />
         )}
       </Routes>
     </Router>
