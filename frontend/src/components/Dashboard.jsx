@@ -114,7 +114,7 @@ function Dashboard() {
                                     {formatDate(it.date)}
                                   </td>
                                   <td
-                                    class={`px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white text-xl ${
+                                    class={`px-4 py-3 font-medium whitespace-nowrap text-xl ${
                                       it.status === "present" &&
                                       "dark:text-green-500 text-green-500"
                                     } ${
