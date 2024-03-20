@@ -39,7 +39,7 @@ function Home() {
       }
     };
     fetchAttendance();
-  }, [token._id, dateState, attendanceData, token.token]);
+  }, [token._id, dateState, token.token]);
 
   const markAttendance = async () => {
     const today = new Date();
