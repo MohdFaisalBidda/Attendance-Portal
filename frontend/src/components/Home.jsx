@@ -4,7 +4,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import axios from "axios";
 import "../App.css";
-import Navbar from "../components/Navbar"
+import Navbar from "../components/Navbar";
 import "../Calendar.css";
 import { toast } from "react-toastify";
 
@@ -25,7 +25,7 @@ function Home() {
           }
         );
         const data = res.data;
-        setAttendanceData(prevAttendanceData => {
+        setAttendanceData((prevAttendanceData) => {
           const updatedAttendanceData = { ...prevAttendanceData };
           data.forEach((record) => {
             const date = new Date(record.date).toISOString().split("T")[0];
@@ -39,7 +39,7 @@ function Home() {
       }
     };
     fetchAttendance();
-  }, [token._id, dateState]);
+  }, [token._id, dateState, attendanceData, token.token]);
 
   const markAttendance = async () => {
     const today = new Date();
@@ -74,7 +74,7 @@ function Home() {
       }
     } else {
       console.log("You can only mark attendance for today.");
-      toast.error("You can only mark attendance for today.");
+      toast.error("Attendance marked for today!");
     }
   };
 
@@ -87,7 +87,7 @@ function Home() {
     const status = attendanceData[formattedDate];
     console.log("Formatted Date:", formattedDate);
     console.log("Status:", status);
-    if (status === "present" && formattedDate === formatDate(new Date())) {
+    if (status === "present") {
       return "present-date";
     } else if (status === "absent") {
       return "absent-date";
@@ -97,7 +97,7 @@ function Home() {
 
   return (
     <>
-          <Navbar/>
+      <Navbar />
       <div className="flex flex-col gap-y-12 justify-center items-center h-screen">
         <Calendar
           onChange={setDateState}
